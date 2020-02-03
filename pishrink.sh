@@ -63,12 +63,13 @@ fi
 help() {
 	local help
 	read -r -d '' help << EOM
-Usage: $0 [-sdrpzh] imagefile.img [newimagefile.img]
+Usage: $0 [-sdrpczh] imagefile.img [newimagefile.img]
 
   -s: Don't expand filesystem when image is booted the first time
   -d: Write debug messages in a debug log file
   -r: Use advanced filesystem repair option if the normal one fails
   -p: Remove logs, apt archives, dhcp leases and ssh hostkeys
+  -c: Clear last played list in Emulationstation
   -z: Gzip compress image after shrinking
 EOM
 	echo "$help"
@@ -76,12 +77,13 @@ EOM
 }
 
 usage() {
-	echo "Usage: $0 [-sdrpzh] imagefile.img [newimagefile.img]"
+	echo "Usage: $0 [-sdrpczh] imagefile.img [newimagefile.img]"
 	echo ""
 	echo "  -s: Skip autoexpand"
 	echo "  -d: Debug mode on"
 	echo "  -r: Use advanced repair options"
 	echo "  -p: Remove logs, apt archives, dhcp leases and ssh hostkeys"
+  echo "  -c: Clear last played list in EmulationStation"
 	echo "  -z: Gzip compress image after shrinking"
 	echo "  -h: display help text"
 	exit -1
@@ -92,13 +94,15 @@ debug=false
 repair=false
 gzip_compress=false
 prep=false
+clearplayed=false
 
-while getopts ":sdrpzh" opt; do
+while getopts ":sdrpczh" opt; do
   case "${opt}" in
     s) should_skip_autoexpand=true ;;
     d) debug=true;;
     r) repair=true;;
     p) prep=true;;
+    c) clearplayed=true;;
     z) gzip_compress=true;;
     h) help;;
     *) usage ;;
@@ -254,6 +258,16 @@ if [[ $prep == true ]]; then
   umount "$mountdir"
 fi
 
+if [[ $clearplayed == true ]]; then
+  info "Clearing last played entries in EmulationStation gamelist filess"
+  mounddir=$(mktemp -d)
+  mount "$loopback" "$mountdir"
+  for f in "$moundir/home/pi/RetroPie/roms/**/gamelist.xml"; do
+    grep -e lastplayed -e playcount -v $f > "$f.tmp"
+    mv -f "$f.tmp" $f
+  done
+  unmount "$mountdir"
+fi
 
 #Make sure filesystem is ok
 checkFilesystem
