@@ -4,10 +4,12 @@ PiShrink is a bash script that automatically shrink a pi image that will then re
 
 ## Usage ##
 ```
-sudo pishrink.sh [-sdrzh] imagefile.img [newimagefile.img]
+sudo pishrink.sh [-sdrpczh] imagefile.img [newimagefile.img]
   -s: Skip autoexpand
   -d: Debug mode on
   -r: Use advanced repair options
+  -p: Remove logs, apt archives, dhcp leases and ssh hostkeys
+  -c: Clear last played entries in Emulationstation gamelist files
   -z: Gzip compress image after shrinking
   -h: display help text
 ```
@@ -16,7 +18,9 @@ If you specify the `newimagefile.img` parameter, the script will make a copy of 
 
 * `-s` will skip the autoexpanding part of the process.
 * `-d` will create a logfile `pishrink.log` which may help for problem analysis.
-* `-r` will attempt to repair the filesystem if regular repairs fail
+* `-r` will attempt to repair the filesystem if regular repairs fail.
+* `-p` will attempt to remove logs, apt archives, dhcp leases and ssh hostkeys.
+* `-c` will attempt to clear last played entries in EmulationStation gamelist files.
 * `-z` will Gzip compress the image after shrinking. The `.gz` extension will be added to the filename.
 
 

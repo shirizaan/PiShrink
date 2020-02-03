@@ -69,7 +69,7 @@ Usage: $0 [-sdrpczh] imagefile.img [newimagefile.img]
   -d: Write debug messages in a debug log file
   -r: Use advanced filesystem repair option if the normal one fails
   -p: Remove logs, apt archives, dhcp leases and ssh hostkeys
-  -c: Clear last played list in Emulationstation
+  -c: Clear last played entries in Emulationstation gamelist files
   -z: Gzip compress image after shrinking
 EOM
 	echo "$help"
