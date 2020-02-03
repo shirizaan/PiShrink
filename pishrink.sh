@@ -137,7 +137,7 @@ if (( EUID != 0 )); then
 fi
 
 #Check that what we need is installed
-for command in parted losetup tune2fs md5sum e2fsck resize2fs; do
+for command in parted losetup tune2fs md5sum e2fsck resize2fs grep; do
   command -v $command >/dev/null 2>&1
   if (( $? != 0 )); then
     error $LINENO "$command is not installed."
@@ -259,14 +259,14 @@ if [[ $prep == true ]]; then
 fi
 
 if [[ $clearplayed == true ]]; then
-  info "Clearing last played entries in EmulationStation gamelist filess"
-  mounddir=$(mktemp -d)
+  info "Clearing last played entries in EmulationStation gamelist files"
+  mountdir=$(mktemp -d)
   mount "$loopback" "$mountdir"
-  for f in "$moundir/home/pi/RetroPie/roms/**/gamelist.xml"; do
-    grep -e lastplayed -e playcount -v $f > "$f.tmp"
-    mv -f "$f.tmp" $f
+  for f in "$mountdir/home/pi/RetroPie/roms/**/gamelist.xml"; do
+    grep -e lastplayed -e playcount -v "$f" > "$f.tmp"
+    mv -f "$f.tmp" "$f"
   done
-  unmount "$mountdir"
+  umount "$mountdir"
 fi
 
 #Make sure filesystem is ok
